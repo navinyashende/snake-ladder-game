@@ -7,10 +7,12 @@ public class Player {
 
     private final String name;
     private int position;
+    private int moves;
 
     public Player(String name) {
        this.name = name;
        this.position = 0;
+       this.moves = 0;
     }
 
     /**
@@ -36,5 +38,12 @@ public class Player {
     }
 
 
+    public int getMoves() {
+        return moves;
+    }
 
+    public Player setMoves(int moves) {
+        this.moves = moves;
+        return this;
+    }
 }

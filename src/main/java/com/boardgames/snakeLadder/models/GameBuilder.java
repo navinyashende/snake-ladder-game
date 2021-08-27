@@ -3,30 +3,31 @@ package com.boardgames.snakeLadder.models;
 import com.boardgames.snakeLadder.exceptions.GameException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.boardgames.snakeLadder.Constants.*;
 
 public class GameBuilder {
 
-    private Player player;
+    private List<Player> players;
     private Dice dice;
     private Board board;
     private int rounds;
 
     public GameBuilder() {
-        player = new Player("Computer");
+        players = Collections.emptyList();
         dice = new Dice();
         board = new Board(getDefaultListOfSnakes(), DEFAULT_BOARD_SIZE);
         rounds = DEFAULT_ROUNDS;
     }
 
-    public Player getPlayer() {
-        return player;
+    public List<Player> getPlayers() {
+        return players;
     }
 
-    public GameBuilder withPlayer(Player player) {
-        this.player = player;
+    public GameBuilder withPlayers(List<Player> players) {
+        this.players = players;
         return this;
     }
 

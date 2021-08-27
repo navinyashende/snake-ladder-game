@@ -5,11 +5,14 @@ import com.boardgames.snakeLadder.exceptions.GameException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class Game {
 
     private Board board;
-    private Player player;
+    private List<Player> players;
     private Dice dice;
     private int rounds;
 
@@ -18,7 +21,7 @@ public class Game {
     final BufferedReader reader;
 
     public Game(GameBuilder gameBuilder) {
-        player = gameBuilder.getPlayer();
+        players = gameBuilder.getPlayers();
         board = gameBuilder.getBoard();
         dice = gameBuilder.getDice();
         rounds = gameBuilder.getRounds();
@@ -29,8 +32,8 @@ public class Game {
         return board;
     }
 
-    public Player getPlayer() {
-        return player;
+    public List<Player> getPlayers() {
+        return players;
     }
 
     public Dice getDice() {
@@ -47,27 +50,33 @@ public class Game {
      */
     public void play() throws GameException {
         try {
-            int counter = 0;
-            while(counter < rounds) {
-                System.out.println("Press any key to roll the dice");
-                reader.readLine();
+            Queue<Player> playerQueue = new LinkedList<>();
+            for(Player player: getPlayers()) {
+                playerQueue.add(player);
+            }
+            Player currPlayer = playerQueue.poll();
+            while(currPlayer.getMoves() < rounds) {
+               /* System.out.println("Press any key to roll the dice");
+                reader.readLine();*/
                 int diceRollResult = dice.roll();
                 System.out.println("You have got " + diceRollResult + " on dice");
                 if(diceRollResult < 6) {
-                    counter++;
+                    currPlayer.setMoves(currPlayer.getMoves() + 1);
                 }
                 else {
                     System.out.println("Congratulations! You have got one free round");
                 }
-                if(player.getPosition() + diceRollResult > board.getBoardSize()) {
+                if(currPlayer.getPosition() + diceRollResult > board.getBoardSize()) {
                     System.out.println("Oops! You cannot move from your position. Please try rolling the dice again");
                     continue;
                 }
-                updatePlayerPositionOnBoard(player, diceRollResult);
-                if(hasPlayerWon(player)) {
+                updatePlayerPositionOnBoard(currPlayer, diceRollResult);
+                if(hasPlayerWon(currPlayer)) {
                     System.out.println("Congratulations!!! You have won the game");
                     return;
                 }
+                playerQueue.add(currPlayer);
+                currPlayer = playerQueue.poll();
             }
             System.out.println("Out of moves. Better luck next time!!");
         }
@@ -94,6 +103,7 @@ public class Game {
         System.out.println("Moving player " + player.getName() + " from " + player.getPosition() + " to " + newPosition);
         player.setPosition(newPosition);
         for(Snake snake : board.getSnakes()) {
+
             if(snake.getStartPosition() == newPosition) {
                 System.out.println("Oops! You have been bitten by snake");
                 newPosition = snake.getEndPosition();

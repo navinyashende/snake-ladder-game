@@ -18,6 +18,10 @@ public class Snake {
         return endPosition;
     }
 
+    public void bite(Player player) {
+        player.setPosition(endPosition);
+    }
+
     @Override
     public String toString() {
         return "{" +
